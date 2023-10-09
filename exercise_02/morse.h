@@ -1,0 +1,4 @@
+#define MORSE_DASH 300
+#define MORSE_DOT 150
+#define MORSE_PAUSE 500
+#define MORSE_END 1000
