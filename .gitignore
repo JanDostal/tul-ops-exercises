@@ -7,3 +7,5 @@
 **/.clangd
 **/.cache
 **/mbed-os
+**/LCD_DISCO_F469NI
+**/BSP_DISCO_F469NI
