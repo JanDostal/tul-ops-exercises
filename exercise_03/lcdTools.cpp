@@ -4,17 +4,17 @@ volatile bool canRun = true;
 
 static void initLcd(LCD_DISCO_F469NI lcd) 
 {
-    lcd.Clear(LCD_BACKGROUND_COLOR);
-    lcd.SetBackColor(LCD_BACKGROUND_COLOR);
-    lcd.SetTextColor(LCD_TEXT_COLOR);
+    lcd.Clear(LCD_COLOR_BLACK);
+    lcd.SetBackColor(LCD_COLOR_BLACK);
+    lcd.SetTextColor(LCD_COLOR_WHITE);
     BSP_LCD_SetFont(&Font20);
 }
 
 static void exitLcd(LCD_DISCO_F469NI lcd) 
 {
-    lcd.Clear(LCD_BACKGROUND_COLOR);
-    lcd.SetBackColor(LCD_BACKGROUND_COLOR);
-    lcd.SetTextColor(LCD_TEXT_COLOR);
+    lcd.Clear(LCD_COLOR_BLACK);
+    lcd.SetBackColor(LCD_COLOR_BLACK);
+    lcd.SetTextColor(LCD_COLOR_WHITE);
     BSP_LCD_SetFont(&Font20);
 }
 
