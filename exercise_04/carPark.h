@@ -4,11 +4,13 @@
 
 #define CAR_PARK_H
 
+#define CAR_PARK_CAPACITY 4
+
 void initCarPark();
 void exitCarPark();
-void driveCar(CAR_ITEM_OBJECT car);
+void driveCar(CAR_OBJECT carReference);
 
-static void parkCar(CAR_ITEM_OBJECT car);
-static void unparkCar();
+static void parkCar(CAR_OBJECT carReference);
+static void unparkCar(CAR_OBJECT carReference);
 
 #endif

@@ -1,68 +1,85 @@
-#include "lcdTools.h"
+#include "carPark.h"
 
 #include "LCD_DISCO_F469NI.h"
+#include "mbed.h"
+#include "vector"
 
 LCD_DISCO_F469NI lcd;
+const uint32_t carParkWidth = lcd.GetXSize();
+const uint32_t carParkHeight = lcd.GetYSize();
+const uint32_t carParkPlaceWidth = carParkWidth / CAR_PARK_CAPACITY;
+const uint32_t carParkPlaceHeight = carParkHeight;
 
-void initLcd() 
+vector<CAR_OBJECT> carPark;
+
+Mutex carParkUpdate_mutex;
+Semaphore carParkArea(CAR_PARK_CAPACITY, CAR_PARK_CAPACITY);
+
+void initCarPark() 
 {
-    lcd.Clear(LCD_COLOR_BLACK);
-    lcd.SetBackColor(LCD_COLOR_BLACK);
-    lcd.SetTextColor(LCD_COLOR_WHITE);
+    lcd.Clear(LCD_COLOR_GRAY);
+    lcd.SetBackColor(LCD_COLOR_GRAY);
+    lcd.SetTextColor(LCD_COLOR_GRAY);
     BSP_LCD_SetFont(&Font20);
-}
 
-void exitLcd() 
-{
-    lcd.Clear(LCD_COLOR_BLACK);
-    lcd.SetBackColor(LCD_COLOR_BLACK);
-    lcd.SetTextColor(LCD_COLOR_WHITE);
-    BSP_LCD_SetFont(&Font20);
-}
-
-static void displayText(string text, LCD_DISCO_F469NI lcd, uint16_t lineHeightPosition) 
-{
-    lcd.DisplayStringAt(0, LINE(lineHeightPosition), (uint8_t*) text.c_str(), CENTER_MODE);
-}
-
-void displayTextFromInterrupt(string text, LCD_DISCO_F469NI lcd)
-{
-    initLcd(lcd);
-
-    displayText(text, lcd, 1);
-    ThisThread::sleep_for(INTERRUPT_DISPLAY_DURATION);
-
-    exitLcd(lcd);
-}
-
-void cycleLcdWithText(tuple <LCD_DISCO_F469NI, string>* data) 
-{
-    initLcd(get<0>(*data));
-
-    while (true) 
+    for (int parkingPlacePosition = 1; parkingPlacePosition <= CAR_PARK_CAPACITY; parkingPlacePosition++) 
     {
-        if (canRun == true) displayText(get<1>(*data), get<0>(*data), 1);
-        else continue;
-
-        if (canRun == true) ThisThread::sleep_for(LCD_CYCLE_DISPLAY_DURATION);
-        else continue;
-
-        if (canRun == true) exitLcd(get<0>(*data));
-        else continue;
-
-        if (canRun == true) ThisThread::sleep_for(LCD_CYCLE_DISPLAY_OFF_DURATION);
-        else continue;
+        carPark.push_back(NULL);
     }
-
-    exitLcd(get<0>(*data));
 }
 
-void setLcdRunState(bool canLcdRun) 
+void exitCarPark() 
 {
-    canRun = canLcdRun;
+    lcd.Clear(LCD_COLOR_GRAY);
+    lcd.SetBackColor(LCD_COLOR_GRAY);
+    lcd.SetTextColor(LCD_COLOR_GRAY);
+    BSP_LCD_SetFont(&Font20);
 }
 
-bool getLcdRunState()
+void driveCar(CAR_OBJECT carReference) 
 {
-    return canRun;
+    while (true)
+    {
+        carParkArea.acquire();
+        
+        carParkUpdate_mutex.lock();
+        parkCar(carReference);
+        carParkUpdate_mutex.unlock();
+
+        ThisThread::sleep_for(carReference->parkingTimeMilliseconds);
+
+        carParkUpdate_mutex.lock();
+        unparkCar(carReference);
+        carParkUpdate_mutex.unlock();
+
+        carParkArea.release();
+
+        ThisThread::sleep_for(carReference->notParkingTimeMilliseconds);
+    }
+}
+
+static void parkCar(CAR_OBJECT carReference) 
+{
+    int index = 0;
+    while(carPark.at(index) != NULL) index++;
+    carPark.at(index) = carReference;
+
+    uint32_t carYPosition = 0;
+    uint32_t carXPosition = index * carParkPlaceWidth;
+
+    lcd.SetTextColor(carReference->color);
+    lcd.FillRect(carXPosition, carYPosition, carParkPlaceWidth, carParkPlaceHeight);
+}
+
+static void unparkCar(CAR_OBJECT carReference) 
+{
+    int index = 0;
+    while(carPark.at(index) != carReference) index++;
+    carPark.at(index) = NULL;
+
+    uint32_t carYPosition = 0;
+    uint32_t carXPosition = index * carParkPlaceWidth;
+
+    lcd.SetTextColor(LCD_COLOR_GRAY);
+    lcd.FillRect(carXPosition, carYPosition, carParkPlaceWidth, carParkPlaceHeight);
 }
