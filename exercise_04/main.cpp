@@ -12,28 +12,44 @@ int main()
     {
         initCarPark();
 
-        CAR cars[] =
-        {
-            { .color = LCD_COLOR_RED, .parkingTimeMilliseconds = 800, .notParkingTimeMilliseconds = 5000 },
-            { .color = LCD_COLOR_BLUE, .parkingTimeMilliseconds = 400, .notParkingTimeMilliseconds = 600 },
-            { .color = LCD_COLOR_GREEN, .parkingTimeMilliseconds = 5000, .notParkingTimeMilliseconds = 400 },
-            { .color = LCD_COLOR_YELLOW, .parkingTimeMilliseconds =600, .notParkingTimeMilliseconds = 3000 },
-            { .color = LCD_COLOR_ORANGE, .parkingTimeMilliseconds = 1000, .notParkingTimeMilliseconds = 800 },
-            { .color = LCD_COLOR_BROWN, .parkingTimeMilliseconds = 3000, .notParkingTimeMilliseconds = 1000 }
-        };
-
-        int carsArrayLength = sizeof(cars) / sizeof(CAR);
+        Thread carThread1;
+        Thread carThread2;
+        Thread carThread3;
+        Thread carThread4;
+        Thread carThread5;
+        Thread carThread6;
 
         CAR_OBJECT carReference;
-        for (int i = 0; i < carsArrayLength; i++) 
-        {
-            Thread carThread;
 
-            carReference = (CAR_OBJECT) malloc(sizeof(CAR));
-            *carReference = cars[i];
+        carReference = (CAR_OBJECT) malloc(sizeof(CAR));
+        *carReference = 
+            { .color = LCD_COLOR_RED, .parkingTimeMilliseconds = 4000, .notParkingTimeMilliseconds = 24000 };
+        carThread1.start(callback(driveCar, carReference));
 
-            carThread.start(callback(driveCar, carReference));
-        }
+        carReference = (CAR_OBJECT) malloc(sizeof(CAR));
+        *carReference =
+            { .color = LCD_COLOR_BLUE, .parkingTimeMilliseconds = 8000, .notParkingTimeMilliseconds = 20000 };
+        carThread2.start(callback(driveCar, carReference));
+
+        carReference = (CAR_OBJECT) malloc(sizeof(CAR));
+        *carReference = 
+            { .color = LCD_COLOR_GREEN, .parkingTimeMilliseconds = 12000, .notParkingTimeMilliseconds = 16000 };
+        carThread3.start(callback(driveCar, carReference));
+
+        carReference = (CAR_OBJECT) malloc(sizeof(CAR));
+        *carReference = 
+            { .color = LCD_COLOR_YELLOW, .parkingTimeMilliseconds = 16000, .notParkingTimeMilliseconds = 12000 };
+        carThread4.start(callback(driveCar, carReference));
+
+        carReference = (CAR_OBJECT) malloc(sizeof(CAR));
+        *carReference = 
+            { .color = LCD_COLOR_ORANGE, .parkingTimeMilliseconds = 20000, .notParkingTimeMilliseconds = 8000 };
+        carThread5.start(callback(driveCar, carReference));
+
+        carReference = (CAR_OBJECT) malloc(sizeof(CAR));
+        *carReference = 
+            { .color = LCD_COLOR_BROWN, .parkingTimeMilliseconds = 24000, .notParkingTimeMilliseconds = 4000 };
+        carThread6.start(callback(driveCar, carReference));
 
         while (true)
         {
