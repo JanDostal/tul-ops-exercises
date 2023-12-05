@@ -5,6 +5,7 @@
 #define CAR_PARK_H
 
 #define CAR_PARK_CAPACITY 4
+#define CAR_PARK_PARKING_UNPARKING_DURATION 1000ms
 
 void initCarPark();
 void exitCarPark();

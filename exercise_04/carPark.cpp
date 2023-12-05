@@ -43,18 +43,20 @@ void driveCar(CAR_OBJECT carReference)
         carParkArea.acquire();
         
         carParkUpdate_mutex.lock();
+        ThisThread::sleep_for(CAR_PARK_PARKING_UNPARKING_DURATION);
         parkCar(carReference);
         carParkUpdate_mutex.unlock();
 
-        ThisThread::sleep_for(carReference->parkingTimeMilliseconds);
+        ThisThread::sleep_for(carReference->carParkOccupationDurationMilliseconds);
 
         carParkUpdate_mutex.lock();
+        ThisThread::sleep_for(CAR_PARK_PARKING_UNPARKING_DURATION);
         unparkCar(carReference);
         carParkUpdate_mutex.unlock();
 
         carParkArea.release();
 
-        ThisThread::sleep_for(carReference->notParkingTimeMilliseconds);
+        ThisThread::sleep_for(carReference->outOfCarParkDurationMilliseconds);
     }
 }
 

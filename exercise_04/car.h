@@ -9,8 +9,8 @@ typedef uint32_t color;
 typedef struct
 {
     color color;
-	uint32_t parkingTimeMilliseconds;
-    uint32_t notParkingTimeMilliseconds;
+	uint32_t carParkOccupationDurationMilliseconds;
+    uint32_t outOfCarParkDurationMilliseconds;
 } CAR, * CAR_OBJECT;
 
 #endif
