@@ -16,7 +16,7 @@ int main()
     
     if (canRun == true) 
     {
-        initTouchDisplay();
+        TOUCH_DISPLAY_BUTTONS_DATA_REFERENCE buttonsDataReference = initTouchDisplay();
         activateBomb();
         
         bombDetonateEvent.start(detonateBomb);
@@ -24,7 +24,7 @@ int main()
         bombCountdownResetEvent.start(resetBombCountdown);
 
         touchDisplayTimerUpdater.start(initTouchDisplayTimer);
-        touchDisplayTouchEventer.start(checkForTouchEvent);
+        touchDisplayTouchEventer.start(callback(checkForTouchEvent, buttonsDataReference));
 
         while (true)
         {

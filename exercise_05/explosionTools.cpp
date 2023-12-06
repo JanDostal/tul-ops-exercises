@@ -8,7 +8,6 @@ const uint32_t explosionEventsFlags[TOUCH_LCD_DISPLAY_BUTTONS_COUNT] = EXPLOSION
 const size_t explosionEventsFlagsCount = sizeof(explosionEventsFlags) / sizeof(uint32_t);
 
 EventFlags explosionEvents;
-volatile bool wasBombDisarmed = false;
 
 Mutex bombEventHandler_mutex;
 
@@ -16,6 +15,7 @@ void activateBomb()
 {
     Watchdog& explosionCountdown = Watchdog::get_instance();
 
+    // watchdog countdown not accurate, it will be about 3 seconds more
     explosionCountdown.start(EXPLOSION_COUNTDOWN_MILLISECONDS);
 }
 
@@ -26,10 +26,12 @@ void deactivateBomb()
     bombEventHandler_mutex.lock();
 
     Watchdog& explosionCountdown = Watchdog::get_instance();
-    explosionCountdown.stop();
     stopTouchDisplayTimer();
 
-    wasBombDisarmed = true;
+    while (true)
+    {
+        explosionCountdown.kick();
+    }
 
     bombEventHandler_mutex.unlock();
 }
@@ -41,7 +43,6 @@ void detonateBomb()
     bombEventHandler_mutex.lock();
 
     Watchdog& explosionCountdown = Watchdog::get_instance();
-    explosionCountdown.stop();
     explosionCountdown.start(EXPLOSION_GET_JINXED_MODE_DURATION_MILLISECONDS);
     
     activateTouchDisplayGetJinxedMode();
@@ -69,11 +70,6 @@ void resetBombCountdown()
 size_t getExplosionEventsFlagsCount() 
 {
     return explosionEventsFlagsCount;
-}
-
-bool getWasBombDisarmedStatus()
-{
-    return wasBombDisarmed;
 }
 
 Mutex& getBombEventHandlerMutex() 

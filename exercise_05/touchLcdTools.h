@@ -11,16 +11,23 @@
 #define TOUCH_LCD_DISPLAY_BUTTONS_COUNT 3
 #define TOUCH_LCD_DISPLAY_BUTTONS_COLORS { LCD_COLOR_RED, LCD_COLOR_GREEN, LCD_COLOR_BLUE }
 
-void initTouchDisplay();
+typedef struct
+{
+	int* explosionEventsFlagsRandomizedIndeces;
+    int* touchDisplayButtonsBoundaries;
+} TOUCH_DISPLAY_BUTTONS_DATA, * TOUCH_DISPLAY_BUTTONS_DATA_REFERENCE;
+
+TOUCH_DISPLAY_BUTTONS_DATA_REFERENCE initTouchDisplay();
 void exitTouchDisplay();
-static void initTouchDisplayButtons();
+
+static int* generateExplosionEventsFlagsRandomizedIndeces(); 
+static int* generateTouchDisplayButtonsBoundaries();
+static TOUCH_DISPLAY_BUTTONS_DATA_REFERENCE initTouchDisplayButtons();
 
 void initTouchDisplayTimer();
 static void updateTouchDisplayTimerState();
 
-static int* generateExplosionEventsFlagsRandomizedIndeces(); 
-static int* generateTouchDisplayButtonsBoundaries();
-void checkForTouchEvent();
+void checkForTouchEvent(TOUCH_DISPLAY_BUTTONS_DATA_REFERENCE buttonsDataReference);
 
 void activateTouchDisplayGetJinxedMode();
 void resetTouchDisplayTimer();
