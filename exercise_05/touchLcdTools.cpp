@@ -201,8 +201,8 @@ void checkForTouchEvent(TOUCH_DISPLAY_BUTTONS_DATA_REFERENCE buttonsDataReferenc
         bombEventHandler_mutex.unlock();
     }
 
-    delete explosionEventsFlagsRandomizedIndeces;
-    delete touchDisplayButtonsBoundaries;
+    delete[] explosionEventsFlagsRandomizedIndeces;
+    delete[] touchDisplayButtonsBoundaries;
     delete buttonsDataReference;
 }
 
